@@ -22,9 +22,9 @@ const ListPage = () => {
 
     data.forEach((employee) => {
       if (employee.from && employee.to) {
-        withDates.push(employee);
-      } else {
         withoutDates.push(employee);
+      } else {
+        withDates.push(employee);
       }
     });
 

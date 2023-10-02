@@ -97,10 +97,6 @@ const handleCalendarDateSelected = (date) => {
         to: selectedToDate,
       };
       addEmployee(employee);
-      Toast.fire({
-        icon: "success",
-        title: "Employee added successfully",
-      });
       navigate("/employees");
     } else {
       Toast.fire({

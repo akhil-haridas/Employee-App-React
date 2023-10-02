@@ -105,10 +105,6 @@ const EditPage = () => {
       !dateValidationResult
     ) {
       updateEmployee(employeeData);
-      Toast.fire({
-        icon: "success",
-        title: "Employee updated successfully",
-      });
       navigate("/employees");
     } else {
       Toast.fire({

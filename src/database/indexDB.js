@@ -1,4 +1,4 @@
-// indexedDB.js
+import { Toast } from "../utils/AddpageUTILS";
 
 const DB_NAME = "employeeDB";
 const DB_VERSION = 1;
@@ -6,12 +6,10 @@ const OBJECT_STORE_NAME = "employees";
 
 let db;
 
-// Open the IndexedDB database
 const openDB = () => {
   const request = window.indexedDB.open(DB_NAME, DB_VERSION);
 
   request.onupgradeneeded = (event) => {
-    // Create an object store if it doesn't exist
     const database = event.target.result;
     if (!database.objectStoreNames.contains(OBJECT_STORE_NAME)) {
       const objectStore = database.createObjectStore(OBJECT_STORE_NAME, {
@@ -31,18 +29,16 @@ const openDB = () => {
   };
 };
 
-// Perform database operations only when 'db' is defined
 const withDB = (callback) => {
   if (db) {
     callback();
   } else {
     setTimeout(() => {
       withDB(callback);
-    }, 100); // Wait and retry
+    }, 100);
   }
 };
 
-// Add an employee to the database
 const addEmployee = (employee) => {
   withDB(() => {
     const transaction = db.transaction(OBJECT_STORE_NAME, "readwrite");
@@ -50,7 +46,10 @@ const addEmployee = (employee) => {
     const request = store.add(employee);
 
     request.onsuccess = () => {
-      console.log("Employee added successfully");
+      Toast.fire({
+        icon: "success",
+        title: "Employee added successfully",
+      });
     };
 
     request.onerror = (event) => {
@@ -59,7 +58,6 @@ const addEmployee = (employee) => {
   });
 };
 
-// Retrieve all employees from the database
 const getAllEmployees = (callback) => {
   withDB(() => {
     const transaction = db.transaction(OBJECT_STORE_NAME, "readonly");
@@ -77,7 +75,6 @@ const getAllEmployees = (callback) => {
   });
 };
 
-// Update an employee in the database
 const updateEmployee = (employee) => {
   withDB(() => {
     const transaction = db.transaction(OBJECT_STORE_NAME, "readwrite");
@@ -85,7 +82,10 @@ const updateEmployee = (employee) => {
     const request = store.put(employee);
 
     request.onsuccess = () => {
-      console.log("Employee updated successfully");
+     Toast.fire({
+       icon: "success",
+       title: "Employee updated successfully",
+     });
     };
 
     request.onerror = (event) => {
@@ -94,7 +94,6 @@ const updateEmployee = (employee) => {
   });
 };
 
-// Delete an employee from the database
 const deleteEmployee = (employeeId) => {
   withDB(() => {
     const transaction = db.transaction(OBJECT_STORE_NAME, "readwrite");
@@ -102,7 +101,10 @@ const deleteEmployee = (employeeId) => {
     const request = store.delete(employeeId);
 
     request.onsuccess = () => {
-      console.log("Employee deleted successfully");
+      Toast.fire({
+        icon: "success",
+        title: "Employee deleted successfully",
+      });
     };
 
     request.onerror = (event) => {

@@ -29,7 +29,7 @@ const ListPage = () => {
 
   return (
     <>
-      <div className="h-[100vh] flex flex-col font-roboto sm:gap-10 md:gap-10 items-start justify-start mx-auto w-full">
+      <div className="h-[100vh] flex flex-col font-roboto items-start justify-start mx-auto w-full">
         {previousEmployees.length > 0 || currentEmployees.length > 0 ? (
           <div className="bg-gray-100 flex flex-col items-center w-full h-full">
             <Head title={"Employee List"} />

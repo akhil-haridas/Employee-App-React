@@ -15,7 +15,6 @@ const Card = ({ employeeData, title, onEmployeeDeleted }) => {
       confirmButtonText: "Delete!",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire("Deleted!");
         deleteEmployee(employeeId);
         onEmployeeDeleted();
       }

@@ -20,7 +20,7 @@ const Input = ({ title, placeholder, id, name, value, onChange }) => {
         name={name}
         value={value}
         onChange={onChange}
-        className="font-sans border border-gray-300 border-solid h-[38px] md:ml-[0] rounded w-[100%] p-2.5"
+        className="font-sans border border-gray-400 border-solid h-[38px] md:ml-[0] rounded w-[100%] p-2.5"
       />
     </div>
   );

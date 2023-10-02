@@ -5,70 +5,110 @@ import SelectInput from "../components/Select/SelectInput";
 import DatePicker from "../components/DatePicker/DatePicker";
 import CancelSave from "../components/CancelSave/CancelSave";
 import Calendar from "../components/Calendar/Calendar";
+import { Toast, roleOptions } from "../utils/AddpageUTILS";
 import { useNavigate } from "react-router-dom";
 import { addEmployee } from "../database/indexDB";
 import { v4 as uuidv4 } from "uuid";
-
-const roleOptions = [
-  { value: "fullstack", label: "Full-stack Developer" },
-  { value: "uiux", label: "UI/UX Designer" },
-  { value: "dataanalyst", label: "Data Analyst" },
-  { value: "softwareengineer", label: "Software Engineer" },
-  { value: "productmanager", label: "Product Manager" },
-];
+import {
+  validateEmployeeName,
+  validateSelectedRole,
+  validateDate,
+} from "../utils/ValidationUTILS";
 
 const AddPage = () => {
-  const navigate = useNavigate()
-  const [employeeName, setEmployeeName] = useState(null);
+  const navigate = useNavigate();
+
+  // State for form fields
+  const [employeeName, setEmployeeName] = useState("");
   const [selectedRole, setSelectedRole] = useState(null);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
-  const [selectedFromDate, setSelectedFromDate] = useState(null);
-  const [selectedToDate, setSelectedToDate] = useState(null);
+  const [selectedFromDate, setSelectedFromDate] = useState("");
+  const [selectedToDate, setSelectedToDate] = useState("");
   const [clickedDatePicker, setClickedDatePicker] = useState(null);
+  const [selectedDate, setSelectedDate] = useState("");
+  // State for validation errors
+  const [nameError, setNameError] = useState("");
+  const [roleError, setRoleError] = useState("");
+  const [dateError, setDateError] = useState("");
 
-  // Function to open the calendar modal when a date picker is clicked
   const openCalendarModal = (datePickerName) => {
-    setClickedDatePicker(datePickerName); // Store which DatePicker was clicked
+    if (selectedFromDate && datePickerName === "From") {
+      setSelectedDate(selectedFromDate);
+    } else if (selectedToDate && datePickerName === "To") {
+      setSelectedDate(selectedToDate);
+    } else {
+      setSelectedDate("")
+    }
+    setClickedDatePicker(datePickerName);
     setIsCalendarModalOpen(true);
   };
 
-  // Function to close the calendar modal
   const closeCalendarModal = () => {
     setIsCalendarModalOpen(false);
-    
   };
 
-  // Function to handle date selection from the calendar
-  const handleCalendarDateSelected = (date) => {
-    setIsCalendarModalOpen(false); // Close the calendar modal
+const handleCalendarDateSelected = (date) => {
+  setIsCalendarModalOpen(false);
 
-    // Check which DatePicker was clicked and update the corresponding state
-    if (clickedDatePicker === "From") {
-      setSelectedFromDate(date);
-    } else if (clickedDatePicker === "To") {
-      setSelectedToDate(date);
-    }
+  if (clickedDatePicker === "From") {
+    setSelectedFromDate(date || "");
+  } else if (clickedDatePicker === "To") {
+    setSelectedToDate(date || "");
+  }
+};
+
+
+  const handleEmployeeNameChange = (e) => {
+    setEmployeeName(e.target.value);
+    setNameError(validateEmployeeName(e.target.value));
+  };
+
+  const handleSelectedRoleChange = (selectedOption) => {
+    setSelectedRole(selectedOption);
+    setRoleError(validateSelectedRole(selectedOption));
   };
 
   const handleSave = () => {
-    if (selectedFromDate && selectedRole && employeeName) {
+    const nameValidationResult = validateEmployeeName(employeeName);
+    const roleValidationResult = validateSelectedRole(selectedRole);
+
+    setNameError(nameValidationResult);
+    setRoleError(roleValidationResult);
+
+    const dateValidationResult = validateDate(selectedFromDate, selectedToDate);
+
+    if (dateValidationResult) {
+      setDateError(dateValidationResult);
+    } else {
+      setDateError("");
+    }
+
+    if (
+      !nameValidationResult &&
+      !roleValidationResult &&
+      !dateValidationResult
+    ) {
       const uniqueId = uuidv4();
       const employee = {
-         id:uniqueId,
-         name: employeeName,
-         role: selectedRole.label,
-         from: selectedFromDate,
-         to:selectedToDate
-       };
+        id: uniqueId,
+        name: employeeName,
+        role: selectedRole.label,
+        from: selectedFromDate,
+        to: selectedToDate,
+      };
       addEmployee(employee);
-      
-       navigate('/employees')
+      Toast.fire({
+        icon: "success",
+        title: "Employee added successfully",
+      });
+      navigate("/employees");
     } else {
-       alert("Fill the fields")
+      Toast.fire({
+        icon: "warning",
+        title: "Please fill the fields properly",
+      });
     }
-   
-   
-  }
+  };
 
   return (
     <>
@@ -82,22 +122,29 @@ const AddPage = () => {
             id="employeeName"
             name="employeeName"
             value={employeeName}
-            onChange={(e) => setEmployeeName(e.target.value)}
+            onChange={handleEmployeeNameChange}
           />
+          {nameError && (
+            <p className="font-sans text-[14px] text-red-600">{nameError}</p>
+          )}
           <SelectInput
-            label="Select Role"
+            label="Employee Role"
             placeholder="Select a role"
             options={roleOptions}
             isSearchable={true}
             id="roleSelect"
             name="roleSelect"
             value={selectedRole}
-            onChange={(selectedOption) => setSelectedRole(selectedOption)}
+            onChange={(selectedOption) =>
+              handleSelectedRoleChange(selectedOption)
+            }
           />
-
+          {roleError && (
+            <p className="font-sans text-[14px] text-red-600">{roleError}</p>
+          )}
           <div className="flex sm:flex-row flex-row gap-4 items-center justify-center md:ml-[0] sm:mt-[25px] mt-[35px] w-[100%] sm:w-full">
             <DatePicker
-              placeholder="Today"
+              placeholder="From"
               name="From"
               onDateSelected={() => openCalendarModal("From")}
               selectedDate={selectedFromDate}
@@ -108,17 +155,20 @@ const AddPage = () => {
               alt="arrowrightalt"
             />
             <DatePicker
-              placeholder="No Date"
+              placeholder="To"
               name="To"
               onDateSelected={() => openCalendarModal("To")}
               selectedDate={selectedToDate}
             />
           </div>
+          {dateError && (
+            <p className="font-sans text-[14px] text-red-600">{dateError}</p>
+          )}
         </div>
       </div>
       <CancelSave
-        onCancel={() => navigate('/employees')}
-        onSave={() => handleSave()}
+        onCancel={() => navigate("/employees")}
+        onSave={handleSave}
         cancelLabel="Cancel"
         saveLabel="Save"
       />
@@ -128,6 +178,7 @@ const AddPage = () => {
             <Calendar
               onDateSelected={handleCalendarDateSelected}
               onCloseModal={closeCalendarModal}
+              selectedDates={selectedDate}
             />
           </div>
         </div>

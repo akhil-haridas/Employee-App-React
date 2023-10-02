@@ -1,53 +1,17 @@
 import React, { useState, useEffect } from "react";
+import {
+  buttonData,
+  daysOfWeek,
+  formatDate,
+  generateCalendarData,
+  handleButtonDate,
+} from "../../utils/AddpageUTILS";
 
-const buttonData = [
-  ["Today", "Next Monday"],
-  ["Next Tuesday", "After 1 Week"],
-];
-
-const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const Calendar = ({ onDateSelected, onCloseModal }) => {
+const Calendar = ({ onDateSelected, onCloseModal, selectedDates }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [currentDay, setCurrentDay] = useState(new Date().getDate());
-  const [selectedDate, setSelectedDate] = useState("No Date");
+  const [selectedDate, setSelectedDate] = useState(selectedDates);
   const [clickedButton, setClickedButton] = useState(null);
-
-  useEffect(() => {
-    setCurrentDate(new Date(currentYear, currentMonth));
-    setCurrentDay(new Date(currentYear, currentMonth, 1).getDay());
-  }, [currentYear, currentMonth]);
-
-  console.log(currentDate,currentDay)
-  const getDaysInMonth = (year, month) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const generateCalendarData = (year, month) => {
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = new Date(year, month, 1).getDay();
-    const calendarData = [];
-
-    let day = 1;
-
-    for (let week = 0; week < 6; week++) {
-      const weekData = [];
-
-      for (let weekday = 0; weekday < 7; weekday++) {
-        if ((week === 0 && weekday < firstDay) || day > daysInMonth) {
-          weekData.push(null);
-        } else {
-          weekData.push(day);
-          day++;
-        }
-      }
-
-      calendarData.push(weekData);
-    }
-
-    return calendarData;
-  };
 
   const calendarData = generateCalendarData(currentYear, currentMonth);
 
@@ -69,94 +33,25 @@ const Calendar = ({ onDateSelected, onCloseModal }) => {
     }
   };
 
-  // Function to handle date click
   const handleDateClick = (date) => {
     setClickedButton(null);
-    // Format the selected date as "1 Oct 2023"
-    const formattedDate = `${date} ${new Date(
-      currentYear,
-      currentMonth
-    ).toLocaleString("default", {
-      month: "short",
-    })} ${currentYear}`;
-
-    setSelectedDate(formattedDate);
-  };
-
-  const formatDate = (day, month, year) => {
-    return `${day} ${new Date(year, month).toLocaleString("default", {
-      month: "short",
-    })} ${year}`;
+    setSelectedDate(formatDate(date, currentYear, currentMonth));
   };
 
   const handleButtonClick = (buttonText) => {
     setClickedButton(buttonText);
-
-    const currentDayOfWeek = new Date().getDay();
-    const daysUntilMonday = 7 - currentDayOfWeek + 1;
-    switch (buttonText) {
-      case "Today":
-        setSelectedDate(
-          formatDate(
-            new Date().getDate(),
-            new Date().getMonth(),
-            new Date().getFullYear()
-          )
-        );
-
-        break;
-      case "Next Monday":
-        const nextMondayDate = new Date();
-        nextMondayDate.setDate(new Date().getDate() + daysUntilMonday);
-        setSelectedDate(
-          formatDate(
-            nextMondayDate.getDate(),
-            nextMondayDate.getMonth(),
-            nextMondayDate.getFullYear()
-          )
-        );
-        break;
-
-      case "Next Tuesday":
-        const daysUntilTuesday = 7 - currentDayOfWeek + 2;
-        const nextTuesdayDate = new Date();
-        nextTuesdayDate.setDate(new Date().getDate() + daysUntilTuesday);
-        setSelectedDate(
-          formatDate(
-            nextTuesdayDate.getDate(),
-            nextTuesdayDate.getMonth(),
-            nextTuesdayDate.getFullYear()
-          )
-        );
-        break;
-
-      case "After 1 Week":
-        const daysInAWeek = 0;
-        const daysToAdd = daysUntilMonday + daysInAWeek;
-        const selectedDate = new Date();
-        selectedDate.setDate(new Date().getDate() + daysToAdd);
-        setSelectedDate(
-          formatDate(
-            selectedDate.getDate(),
-            selectedDate.getMonth(),
-            selectedDate.getFullYear()
-          )
-        );
-        break;
-      default:
-        break;
-    }
+    const formattedDate = handleButtonDate(buttonText, new Date());
+    setSelectedDate(formattedDate);
   };
 
   const handleSaveClick = () => {
-    // Call the onDateSelected function with the selected date
     onDateSelected(selectedDate);
     onCloseModal();
   };
 
   const handleCancelClick = () => {
     onDateSelected("");
-    onCloseModal(); 
+    onCloseModal();
   };
 
   return (
@@ -234,8 +129,8 @@ const Calendar = ({ onDateSelected, onCloseModal }) => {
                               } ${
                                 formatDate(
                                   week[index],
-                                  currentMonth,
-                                  currentYear
+                                  currentYear,
+                                  currentMonth
                                 ) === selectedDate
                                   ? "custom-circle-select"
                                   : ""
@@ -269,7 +164,7 @@ const Calendar = ({ onDateSelected, onCloseModal }) => {
                     alt="calendar"
                   />
                   <p className="font-sans mt-[3px] text-base text-blue_gray-900 font-medium font-roboto">
-                    {selectedDate}
+                    {selectedDate || "No Date"}
                   </p>
                 </div>
               </div>
@@ -284,7 +179,12 @@ const Calendar = ({ onDateSelected, onCloseModal }) => {
                 </div>
                 <button
                   onClick={handleSaveClick}
-                  className="font-sans p-[9px] bg-blue-500 rounded-lg !text-white-A700 cursor-pointer font-medium font-roboto leading-[normal] min-w-[73px] rounded-md text-center text-sm"
+                  className={`font-sans p-[9px] rounded-lg ${
+                    selectedDate
+                      ? "bg-blue-500 text-white-A700 cursor-pointer"
+                      : "bg-gray-300 cursor-not-allowed"
+                  } font-medium font-roboto leading-[normal] min-w-[73px] rounded-md text-center text-sm`}
+                  disabled={!selectedDate}
                 >
                   Save
                 </button>

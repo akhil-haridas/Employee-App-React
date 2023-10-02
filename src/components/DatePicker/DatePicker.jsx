@@ -15,6 +15,7 @@ const DatePicker = ({ placeholder, name, onDateSelected, selectedDate }) => {
       <input
         className="cursor-pointer font-sans p-2.5 placeholder:text-blue_gray-900 text-left text-sm w-full bg-transparent border-0"
         type="text"
+        readOnly
         name={name || "datepicker"}
         value={selectedDate || placeholder}
         onClick={() => handleDateClick()}

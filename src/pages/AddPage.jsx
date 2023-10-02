@@ -7,6 +7,7 @@ import CancelSave from "../components/CancelSave/CancelSave";
 import Calendar from "../components/Calendar/Calendar";
 import { useNavigate } from "react-router-dom";
 import { addEmployee } from "../database/indexDB";
+import { v4 as uuidv4 } from "uuid";
 
 const roleOptions = [
   { value: "fullstack", label: "Full-stack Developer" },
@@ -51,7 +52,9 @@ const AddPage = () => {
 
   const handleSave = () => {
     if (selectedFromDate && selectedRole && employeeName) {
-       const employee = {
+      const uniqueId = uuidv4();
+      const employee = {
+         id:uniqueId,
          name: employeeName,
          role: selectedRole.label,
          from: selectedFromDate,

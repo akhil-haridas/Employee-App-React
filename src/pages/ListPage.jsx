@@ -32,6 +32,13 @@ const ListPage = () => {
     setEmployeesWithoutDates(withoutDates);
   };
 
+  const handleEmployeeDeleted = () => {
+    // Fetch the updated list of employees and re-split them by date
+    getAllEmployees((data) => {
+      splitEmployeesByDate(data);
+    });
+  };
+
   return (
     <>
       <div className="h-[100vh] flex flex-col font-roboto sm:gap-10 md:gap-10 items-start justify-start mx-auto w-full">
@@ -42,12 +49,14 @@ const ListPage = () => {
               <Card
                 title={"Current Employees"}
                 employeeData={employeesWithDates}
+                onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}
             {employeesWithoutDates.length > 0 && (
               <Card
                 title={"Previous Employees"}
                 employeeData={employeesWithoutDates}
+                onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}
           </div>

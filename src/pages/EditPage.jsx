@@ -16,8 +16,8 @@ const roleOptions = [
   { value: "productmanager", label: "Product Manager" },
 ];
 
-const AddPage = () => {
-  const navigate = useNavigate()
+const EditPage = () => {
+  const navigate = useNavigate();
   const [employeeName, setEmployeeName] = useState(null);
   const [selectedRole, setSelectedRole] = useState(null);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -34,7 +34,6 @@ const AddPage = () => {
   // Function to close the calendar modal
   const closeCalendarModal = () => {
     setIsCalendarModalOpen(false);
-    
   };
 
   // Function to handle date selection from the calendar
@@ -51,26 +50,24 @@ const AddPage = () => {
 
   const handleSave = () => {
     if (selectedFromDate && selectedRole && employeeName) {
-       const employee = {
-         name: employeeName,
-         role: selectedRole.label,
-         from: selectedFromDate,
-         to:selectedToDate
-       };
+      const employee = {
+        name: employeeName,
+        role: selectedRole.label,
+        from: selectedFromDate,
+        to: selectedToDate,
+      };
       addEmployee(employee);
-      
-       navigate('/employees')
+
+      navigate("/employees");
     } else {
-       alert("Fill the fields")
+      alert("Fill the fields");
     }
-   
-   
-  }
+  };
 
   return (
     <>
       <div className="bg-white-A700 flex h-[85vh] flex-col font-roboto sm:gap-10 md:gap-10 gap-[25px] items-center justify-start mx-auto w-full">
-        <Head title={"Add Employee Details"} />
+        <Head title={"Edit Employee Details"} />
 
         <div className="flex flex-col items-start justify-start max-w-[100%] mx-auto md:px-5 ">
           <Input
@@ -114,7 +111,7 @@ const AddPage = () => {
         </div>
       </div>
       <CancelSave
-        onCancel={() => navigate('/employees')}
+        onCancel={() => navigate("/employees")}
         onSave={() => handleSave()}
         cancelLabel="Cancel"
         saveLabel="Save"
@@ -133,4 +130,4 @@ const AddPage = () => {
   );
 };
 
-export default AddPage;
+export default EditPage;

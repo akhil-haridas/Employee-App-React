@@ -16,7 +16,9 @@ const openDB = () => {
         keyPath: "id",
         autoIncrement: true,
       });
+      console.log(objectStore);
     }
+    
   };
 
   request.onsuccess = (event) => {

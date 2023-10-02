@@ -5,7 +5,6 @@ import { deleteEmployee } from "../../database/indexDB";
 
 const Card = ({ employeeData, title, onEmployeeDeleted }) => {
   const handleDelete = (employeeId) => {
-
     Swal.fire({
       title: "Are you sure?",
       icon: "warning",

@@ -91,9 +91,6 @@ const EditPage = () => {
      setEmployeeData({ ...employeeData, name: name });
    };
 
-
-  
-
   return (
     <>
       <div className="bg-white-A700 flex h-[85vh] flex-col font-roboto sm:gap-10 md:gap-10 gap-[25px] items-center justify-start mx-auto w-full">

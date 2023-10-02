@@ -14,8 +14,7 @@ const ListPage = () => {
       splitEmployeesByDate(data);
     });
   }, []);
-
-  // Function to split employees based on date presence
+  
   const splitEmployeesByDate = (data) => {
     const withDates = [];
     const withoutDates = [];
@@ -33,7 +32,6 @@ const ListPage = () => {
   };
 
   const handleEmployeeDeleted = () => {
-    // Fetch the updated list of employees and re-split them by date
     getAllEmployees((data) => {
       splitEmployeesByDate(data);
     });
@@ -48,14 +46,14 @@ const ListPage = () => {
             {employeesWithDates.length > 0 && (
               <Card
                 title={"Current Employees"}
-                employeeData={employeesWithDates}
+                employeeData={employeesWithoutDates}
                 onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}
             {employeesWithoutDates.length > 0 && (
               <Card
                 title={"Previous Employees"}
-                employeeData={employeesWithoutDates}
+                employeeData={employeesWithDates}
                 onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}

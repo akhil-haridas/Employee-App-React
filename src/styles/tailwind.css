@@ -238,7 +238,7 @@ li:hover {
 .circle {
     width: 8vmax;
     height: 8vmax;
-    border-right: 4px solid #ffffff;
+    border-right: 4px solid #4299e1;
     border-radius: 50%;
     -webkit-animation: spinRight 800ms linear infinite;
     animation: spinRight 800ms linear infinite;
@@ -253,7 +253,7 @@ li:hover {
     position: absolute;
     top: calc(50% - 3vmax);
     left: calc(50% - 3vmax);
-    border-left: 3px solid #F28123;
+    border-left: 3px solid #ffff;
     border-radius: 100%;
     -webkit-animation: spinLeft 800ms linear infinite;
     animation: spinLeft 800ms linear infinite;
@@ -267,7 +267,7 @@ li:hover {
     position: absolute;
     top: calc(50% - 3vmax);
     left: calc(50% - 3vmax);
-    border-left: 3px solid #F28123;
+    border-left: 3px solid #ffff;
     border-radius: 100%;
     -webkit-animation: spinLeft 800ms linear infinite;
     animation: spinLeft 800ms linear infinite;
@@ -276,13 +276,16 @@ li:hover {
     top: calc(50% - 2vmax);
     left: calc(50% - 2vmax);
     border: 0;
-    border-right: 2px solid #000;
+    border-right: 2px solid #4299e1;
     -webkit-animation: none;
     animation: none;
 }
 
 .custom-cursor {
     cursor: url('../../public//images/cursor.svg'), auto;
+}
+.edit-cursor {
+    cursor: url('../../public//images/edit.svg'), auto;
 }
 
 /* modal.css */
@@ -304,4 +307,12 @@ li:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     z-index: 1001;
     width: 100%;
+}
+
+.swal2-popup{
+    background: transparent;
+}
+
+.swal2-html-container,.swal2-title{
+color: #fff;
 }

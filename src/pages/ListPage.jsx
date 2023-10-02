@@ -4,58 +4,46 @@ import Card from "../components/Card/Card";
 import AddButton from "../components/AddButton/AddButton";
 import Empty from "../components/Empty/Empty";
 import { getAllEmployees } from "../database/indexDB";
+import { splitEmployeesByDate } from "../utils/ListpageUTILS.js";
 
 const ListPage = () => {
-  const [employeesWithDates, setEmployeesWithDates] = useState([]);
-  const [employeesWithoutDates, setEmployeesWithoutDates] = useState([]);
+  const [previousEmployees, setPreviousEmployees] = useState([]);
+  const [currentEmployees, setCurrentEmployees] = useState([]);
 
-  useEffect(() => {
+  const fetchEmployees = () => {
     getAllEmployees((data) => {
-      splitEmployeesByDate(data);
+      const { previousEmployees, currentEmployees } =
+        splitEmployeesByDate(data);
+      setPreviousEmployees(previousEmployees);
+      setCurrentEmployees(currentEmployees);
     });
-  }, []);
-
-  // Function to split employees based on date presence
-  const splitEmployeesByDate = (data) => {
-    const withDates = [];
-    const withoutDates = [];
-
-    data.forEach((employee) => {
-      if (employee.from && employee.to) {
-        withoutDates.push(employee);
-      } else {
-        withDates.push(employee);
-      }
-    });
-
-    setEmployeesWithDates(withDates);
-    setEmployeesWithoutDates(withoutDates);
   };
 
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
   const handleEmployeeDeleted = () => {
-    // Fetch the updated list of employees and re-split them by date
-    getAllEmployees((data) => {
-      splitEmployeesByDate(data);
-    });
+    fetchEmployees();
   };
 
   return (
     <>
       <div className="h-[100vh] flex flex-col font-roboto sm:gap-10 md:gap-10 items-start justify-start mx-auto w-full">
-        {employeesWithDates.length > 0 || employeesWithoutDates.length > 0 ? (
+        {previousEmployees.length > 0 || currentEmployees.length > 0 ? (
           <div className="bg-gray-100 flex flex-col items-center w-full h-full">
             <Head title={"Employee List"} />
-            {employeesWithDates.length > 0 && (
+            {previousEmployees.length > 0 && (
               <Card
                 title={"Current Employees"}
-                employeeData={employeesWithDates}
+                employeeData={previousEmployees}
                 onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}
-            {employeesWithoutDates.length > 0 && (
+            {currentEmployees.length > 0 && (
               <Card
                 title={"Previous Employees"}
-                employeeData={employeesWithoutDates}
+                employeeData={currentEmployees}
                 onEmployeeDeleted={handleEmployeeDeleted}
               />
             )}

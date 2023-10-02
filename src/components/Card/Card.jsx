@@ -1,16 +1,25 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import { deleteEmployee } from '../../database/indexDB';
+import React from "react";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+import { deleteEmployee } from "../../database/indexDB";
 
 const Card = ({ employeeData, title, onEmployeeDeleted }) => {
   const handleDelete = (employeeId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this employee?"
-    );
-    if (confirmDelete) {
-      deleteEmployee(employeeId);
-      onEmployeeDeleted()
-    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Delete!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire("Deleted!");
+        deleteEmployee(employeeId);
+        onEmployeeDeleted();
+      }
+    });
   };
 
   const navigate = useNavigate();
@@ -28,7 +37,7 @@ const Card = ({ employeeData, title, onEmployeeDeleted }) => {
         >
           <div
             onClick={() => navigate(`/edit?employeeId=${employee.id}`)}
-            className="bg-white-A700 flex flex-row sm:flex-col sm:items-start gap-[15rem] md:gap-[7rem] sm:gap-[0rem] items-center justify-start my-0 p-4 w-full"
+            className="edit-cursor bg-white-A700 flex flex-row sm:flex-col sm:items-start gap-[15rem] md:gap-[7rem] sm:gap-[0rem] items-center justify-start my-0 p-4 w-full"
           >
             <div className="flex flex-col items-start justify-start min-w-[15%]">
               <p className="font-sans font-bold text-gray-700 text-lg w-auto">
@@ -50,11 +59,10 @@ const Card = ({ employeeData, title, onEmployeeDeleted }) => {
           </div>
           <div
             onClick={() => handleDelete(employee.id)}
-            className="trash bg-red-600 w-[15%] h-[100%] flex items-center justify-center text-2xl"
+            className="trash bg-red-500 hover:bg-red-600 w-[10%] h-[100%] sm:min-w-[20%] flex items-center justify-center text-2xl"
           >
             <button className="hover:rotate-90 transition-transform duration-500">
               <i class="fa-solid fa-trash-can" style={{ color: "#ffffff" }}></i>
-              {/* fa-bounce */}
             </button>
           </div>
         </div>
@@ -63,4 +71,4 @@ const Card = ({ employeeData, title, onEmployeeDeleted }) => {
   );
 };
 
-export default Card
+export default Card;
